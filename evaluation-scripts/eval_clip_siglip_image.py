@@ -219,6 +219,43 @@ class ClipLike:
             vecs.append(self.item_cache[key])
         return np.stack(vecs)
 
+class RemoteEncoder:
+    """Encoder that calls a remote /embed HTTP service (kind=remote).
+
+    Protocol: POST {endpoint} {"items":[{"text","image_base64"}]} -> {"embeddings":[[...]]}
+    Implements the same prepare(items, image_root) interface as ClipLike, so the rest of
+    the eval pipeline is unchanged. Useful when the model is served via FastAPI/vllm and
+    you don't want to load weights on the eval machine.
+    """
+    def __init__(self, endpoint, batch_size):
+        import requests
+        self.endpoint = endpoint
+        self.batch_size = batch_size
+        self._requests = requests
+
+    def prepare(self, items, image_root):
+        import base64
+        payload = []
+        for it in items:
+            text = it.get('text') or ''
+            image = it.get('image') or ''
+            pi = {'text': text}
+            if image:
+                p = str(Path(image_root) / image)
+                with open(p, 'rb') as f:
+                    pi['image_base64'] = base64.b64encode(f.read()).decode()
+            payload.append(pi)
+        embs = []
+        for i in range(0, len(payload), self.batch_size):
+            chunk = payload[i:i + self.batch_size]
+            r = self._requests.post(self.endpoint, json={'items': chunk}, timeout=600)
+            r.raise_for_status()
+            embs.extend(r.json()['embeddings'])
+        v = np.asarray(embs, dtype='float32')
+        v = v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
+        return v
+
+
 def eval_dataset(model, task_name, parser, image_root, output_dir):
     ds = load_dataset('ziyjiang/MMEB_Test_Instruct', task_name, split='test')
     rankings = []
@@ -242,17 +279,23 @@ def eval_dataset(model, task_name, parser, image_root, output_dir):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--model-id', required=True)
-    ap.add_argument('--kind', choices=['clip','siglip'], required=True)
+    ap.add_argument('--kind', choices=['clip','siglip','remote'], required=True)
     ap.add_argument('--dataset-config', default='experiments/public/eval/image.yaml')
     ap.add_argument('--image-root', default='/root/mmeb_eval/data/image-tasks/MMEB')
     ap.add_argument('--output-dir', required=True)
     ap.add_argument('--batch-size', type=int, default=64)
     ap.add_argument('--tasks', default='')
+    ap.add_argument('--endpoint', default='', help='remote /embed URL (kind=remote)')
     args = ap.parse_args()
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     cfg = yaml.safe_load(open(args.dataset_config))
     tasks = [t.strip() for t in args.tasks.split(',') if t.strip()] or list(cfg.keys())
-    model = ClipLike(args.model_id, args.kind, args.batch_size)
+    if args.kind == 'remote':
+        if not args.endpoint:
+            ap.error('--endpoint is required for kind=remote')
+        model = RemoteEncoder(args.endpoint, args.batch_size)
+    else:
+        model = ClipLike(args.model_id, args.kind, args.batch_size)
     all_scores = {}
     for task in tasks:
         parser = cfg[task]['dataset_parser']
