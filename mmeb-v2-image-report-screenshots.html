@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MMEB-V2 Image Evaluation Screenshots</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d9e1ec;
+      --blue: #2563eb;
+      --green: #059669;
+      --orange: #d97706;
+      --red: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+
+    .shot {
+      width: 1280px;
+      min-height: 720px;
+      padding: 48px;
+      background: var(--bg);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 6px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    th, td {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      text-align: right;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    th {
+      background: #f2f5f9;
+      color: #263244;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th:last-child, td:last-child {
+      border-right: 0;
+    }
+
+    .model, th.model {
+      text-align: left;
+      width: 310px;
+      font-weight: 800;
+    }
+
+    .best {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .mid {
+      color: var(--orange);
+      font-weight: 800;
+    }
+
+    .low {
+      color: var(--red);
+      font-weight: 800;
+    }
+
+    .note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr 72px 1fr 72px 1fr;
+      grid-template-rows: auto 30px auto 30px auto;
+      align-items: center;
+      gap: 0;
+      margin-top: 20px;
+    }
+
+    .flow-node {
+      min-height: 106px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .flow-node.primary {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    .flow-node.success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .node-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .node-body {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .arrow {
+      color: var(--blue);
+      font-size: 40px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .down {
+      color: var(--blue);
+      font-size: 32px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .flow-caption {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: #334155;
+      font-size: 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .callout {
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .callout h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .callout p {
+      margin: 0;
+      color: #166534;
+      font-size: 18px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+  <section class="shot" id="official-summary">
+    <div class="panel">
+      <div class="title">
+        <div>
+          <h1>MMEB-V2 Image 官方主指标</h1>
+          <div class="sub">36 个 image 任务，分数为 hit@1 * 100</div>
+        </div>
+        <span class="badge">Image-only</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="model">Model</th>
+            <th>Image CLS</th>
+            <th>Image QA</th>
+            <th>Image RET</th>
+            <th>Image GD</th>
+            <th>Image Overall</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model">CLIP ViT-L/14</td>
+            <td>55.3</td>
+            <td>10.5</td>
+            <td>52.2</td>
+            <td>53.3</td>
+            <td>41.6</td>
+          </tr>
+          <tr>
+            <td class="model">SigLIP2 SO400M</td>
+            <td>55.4</td>
+            <td>9.1</td>
+            <td>43.8</td>
+            <td class="mid">62.1</td>
+            <td>39.4</td>
+          </tr>
+          <tr>
+            <td class="model">Qwen3-VL-Embedding-8B</td>
+            <td class="best">74.2</td>
+            <td class="best">81.1</td>
+            <td class="best">80.1</td>
+            <td class="best">92.3</td>
+            <td class="best">80.1</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">结论：Qwen3 在 Overall、RET、QA、GD 上均显著领先，更适合复杂图文 embedding 场景。</div>
+    </div>
+  </section>
+
+  <section class="shot" id="retrieval-summary">
+    <div class="panel">
+      <div class="title">
+        <div>
+          <h1>业务检索扩展指标</h1>
+          <div class="sub">只统计 Image RET 的 12 个检索任务，共 12000 条样本</div>
+        </div>
+        <span class="badge">Top-K Retrieval</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="model">Model</th>
+            <th>Recall@1</th>
+            <th>Recall@5</th>
+            <th>Recall@10</th>
+            <th>MRR@10</th>
+            <th>nDCG@10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model">CLIP ViT-L/14</td>
+            <td>52.2</td>
+            <td>74.3</td>
+            <td>81.3</td>
+            <td>61.8</td>
+            <td>66.5</td>
+          </tr>
+          <tr>
+            <td class="model">SigLIP2 SO400M</td>
+            <td>43.8</td>
+            <td>66.0</td>
+            <td>73.2</td>
+            <td>53.5</td>
+            <td>58.2</td>
+          </tr>
+          <tr>
+            <td class="model">Qwen3-VL-Embedding-8B</td>
+            <td class="best">80.2</td>
+            <td class="best">94.9</td>
+            <td class="best">97.0</td>
+            <td class="best">86.6</td>
+            <td class="best">89.2</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">业务含义：Qwen3 的 Recall@10 达到 97.0，更适合作为第一阶段召回模型，后面可接 reranker。</div>
+    </div>
+  </section>
+
+  <section class="shot" id="evaluation-logic">
+    <div class="panel">
+      <div class="title">
+        <div>
+          <h1>评估流程图</h1>
+          <div class="sub">统一 embedding 排序评估：构造输入、编码、排序、计算指标</div>
+        </div>
+        <span class="badge">Cosine Ranking</span>
+      </div>
+      <div class="flow">
+        <div class="flow-node primary" style="grid-column: 1; grid-row: 1;">
+          <div class="node-title">MMEB-V2 Image Task</div>
+          <div class="node-body">读取 query、candidates、labels；只使用 image 相关 36 个任务。</div>
+        </div>
+        <div class="arrow" style="grid-column: 2; grid-row: 1;">→</div>
+        <div class="flow-node" style="grid-column: 3; grid-row: 1;">
+          <div class="node-title">构造 Query / Candidates</div>
+          <div class="node-body">图片、文本、图文组合统一转成模型输入。</div>
+        </div>
+        <div class="arrow" style="grid-column: 4; grid-row: 1;">→</div>
+        <div class="flow-node" style="grid-column: 5; grid-row: 1;">
+          <div class="node-title">模型编码 Embedding</div>
+          <div class="node-body">query 和 candidates 分别编码，并做 L2 normalize。</div>
+        </div>
+        <div class="down" style="grid-column: 5; grid-row: 2;">↓</div>
+        <div class="flow-node" style="grid-column: 5; grid-row: 3;">
+          <div class="node-title">相似度计算</div>
+          <div class="node-body">归一化后使用点积计算 cosine similarity。</div>
+        </div>
+        <div class="arrow" style="grid-column: 4; grid-row: 3;">←</div>
+        <div class="flow-node" style="grid-column: 3; grid-row: 3;">
+          <div class="node-title">Top-K 排序</div>
+          <div class="node-body">按相似度降序排列候选，得到 ranking。</div>
+        </div>
+        <div class="arrow" style="grid-column: 2; grid-row: 3;">←</div>
+        <div class="flow-node success" style="grid-column: 1; grid-row: 3;">
+          <div class="node-title">指标计算</div>
+          <div class="node-body">对比 labels，计算 hit@1、Recall@K、MRR@10、nDCG@10。</div>
+        </div>
+        <div class="down" style="grid-column: 1; grid-row: 4;">↓</div>
+        <div class="flow-node success" style="grid-column: 1 / 6; grid-row: 5; min-height: 92px;">
+          <div class="node-title">输出评估结果</div>
+          <div class="node-body">官方主指标用于 benchmark 对齐；Recall@5/10、MRR@10、nDCG@10 用于判断业务检索可用性。</div>
+        </div>
+      </div>
+      <div class="flow-caption">scores = normalize(candidate_embeddings) @ normalize(query_embedding)</div>
+    </div>
+  </section>
+
+  <section class="shot" id="final-summary">
+    <div class="summary">
+      <div class="panel">
+        <div class="title">
+          <div>
+            <h1>最终分数总结</h1>
+            <div class="sub">官方 Overall + 业务检索核心指标</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th class="model">Model</th>
+              <th>Overall</th>
+              <th>R@1</th>
+              <th>R@5</th>
+              <th>R@10</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="model">CLIP</td>
+              <td>41.6</td>
+              <td>52.2</td>
+              <td>74.3</td>
+              <td>81.3</td>
+            </tr>
+            <tr>
+              <td class="model">SigLIP2</td>
+              <td>39.4</td>
+              <td>43.8</td>
+              <td>66.0</td>
+              <td>73.2</td>
+            </tr>
+            <tr>
+              <td class="model">Qwen3</td>
+              <td class="best">80.1</td>
+              <td class="best">80.2</td>
+              <td class="best">94.9</td>
+              <td class="best">97.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <h2>推荐结论</h2>
+        <p>如果目标是业务以图搜图、图文检索和候选召回，首选 Qwen3-VL-Embedding-8B。它在 Recall@5、Recall@10 上优势最明显，适合先召回再 rerank 的生产链路。</p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
